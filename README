@@ -1,0 +1,43 @@
+NAME
+    DBIx::Class::DynamicDefault - Automatically set and update fields
+
+SYNOPSIS
+      package My::Schema::SomeTable;
+
+      __PACKAGE__->load_components(qw/DynamicDefault ... Core/);
+
+      __PACKAGE__->add_columns(
+              quux          => { data_type => 'integer' },
+              quux_plus_one => { data_type => 'integer',
+                                 dynamic_default_on_create => \&quux_plus_one_default,
+                                 dynamic_default_on_update => 'quux_plus_one_default', },
+              last_changed  => { data_type => 'integer',
+                                 dynamic_default_on_create => 'now',
+                                 dynamic_default_on_update => 'now, },
+      );
+
+      sub quux_plus_one_default {
+          my ($self) = @_;
+          return $self->quux + 1;
+      }
+
+      sub now {
+          return DateTime->now->epoch;
+      }
+
+    Now, any update or create actions will set the specified columns to the
+    value returned by the callback you specified as a method name or code
+    reference.
+
+DESCRIPTION
+    Automatically set and update fields with values calculated at runtime.
+
+AUTHOR
+    Florian Ragwitz <rafl@debian.org>
+
+LICENSE
+    This software is copyright (c) 2008 by Florian Ragwitz.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as perl itself.
+

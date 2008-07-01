@@ -1,0 +1,9 @@
+^\.
+\.bak$
+\.swp$
+^Makefile$
+^Makefile.old$
+^DBIx-Class-DynamicDefault-
+^cover_db\b
+^blib\b
+^pm_to_blib$
