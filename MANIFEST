@@ -16,6 +16,7 @@ META.yml
 README
 t/basic.t
 t/lib/TestSchema.pm
+t/lib/TestSchema/Affe.pm
 t/lib/TestSchema/Table.pm
 xt/release/pod.t
 xt/release/podcoverage.t

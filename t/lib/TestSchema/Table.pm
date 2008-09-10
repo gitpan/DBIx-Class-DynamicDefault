@@ -24,6 +24,7 @@ __PACKAGE__->add_columns(
             dynamic_default_on_create => \&corge_default,
             dynamic_default_on_update => 'corge_default',
         },
+        fred => { data_type => 'text' },
 );
 
 __PACKAGE__->set_primary_key(qw/quux/);
@@ -34,13 +35,13 @@ __PACKAGE__->set_primary_key(qw/quux/);
     sub quux_default {
         return ++$i;
     }
-}
 
-sub corge_default {
-    my ($self) = @_;
+    sub corge_default {
+        my ($self) = @_;
 
-    return 'update' if $self->in_storage;
-    return 'create';
+        return 'update' . ++$i if $self->in_storage;
+        return 'create';
+    }
 }
 
 1;

@@ -5,7 +5,7 @@ package DBIx::Class::DynamicDefault;
 
 use parent 'DBIx::Class';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 __PACKAGE__->mk_classdata(
     __column_dynamic_default_triggers => {
@@ -63,7 +63,7 @@ sub add_columns {
         my $info = $self->column_info($column);
 
         my $update_trigger = $info->{dynamic_default_on_update};
-        push @update_columns, [$column => $update_trigger]
+        push @update_columns, [$column => $update_trigger, $info->{always_update} || 0]
             if $update_trigger;
 
         my $create_trigger = $info->{dynamic_default_on_create};
@@ -73,7 +73,7 @@ sub add_columns {
 
     if (@update_columns || @create_columns) {
         $self->__column_dynamic_default_triggers({
-            on_update => \@update_columns,
+            on_update => [sort { $b->[2] <=> $a->[2] } @update_columns],
             on_create => \@create_columns,
         });
     }
@@ -98,13 +98,15 @@ sub insert {
 }
 
 sub update {
-    my $self = shift;
+    my ($self, $upd) = @_;
 
+    $self->set_inflated_columns($upd) if $upd;
     my %dirty = $self->get_dirty_columns;
 
     my @columns = @{ $self->__column_dynamic_default_triggers->{on_update} };
     for my $column (@columns) {
         my $column_name = $column->[0];
+        next if !%dirty && !$column->[2];
         next if exists $dirty{$column_name};
 
         my $meth = $column->[1];
@@ -112,10 +114,45 @@ sub update {
 
         my $accessor = $self->column_info($column_name)->{accessor} || $column_name;
         $self->$accessor($default_value);
+
+        $dirty{$column_name} = 1;
     }
 
-    return $self->next::method(@_);
+    return $self->next::method;
 }
+
+=head1 OPTIONS
+
+=head2 dynamic_default_on_create
+
+  dynamic_default_on_create => sub { ... }
+
+  dynamic_default_on_create => 'method_name'
+
+When inserting a new row all columns with the C<dynamic_default_on_create>
+option will be set to the return value of the specified callback unless the
+columns value has been explicitly set. The callback, that'll be invoked with
+the row object as its only argument, may be a code reference or a method name.
+
+=head2 dynamic_default_on_update
+
+  dynamic_default_on_update => sub { ... }
+
+  dynamic_default_on_update => 'method_name'
+
+When updating a row all columns with the C<dynamic_default_on_update> option
+will be set to the return value of the specified callback unless the columns
+value has been explicitly set.
+
+Columns will only be altered if other dirty columns exist. See C<always_update>
+on how to change this.
+
+=head2 always_update
+
+  always_update => 1
+
+When setting C<always_update> to 1 C<dynamic_default_on_update> callbacks will
+always be invoked, even if no other columns are dirty.
 
 =head1 AUTHOR
 
