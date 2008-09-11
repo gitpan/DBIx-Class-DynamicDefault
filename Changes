@@ -1,3 +1,7 @@
+0.03  Thu, 11 Sep 2008 18:42:48 +0200
+ Florian Ragwitz (1):
+     Require DBIx::Class >= 0.08009.
+
 0.02  Wed, 10 Sep 2008 23:02:57 +0200
  Florian Ragwitz (4):
      Another SYNOPSIS example.

@@ -15,9 +15,13 @@ no_index:
   directory:
     - inc
     - t
+provides:
+  DBIx::Class::DynamicDefault:
+    file: lib/DBIx/Class/DynamicDefault.pm
+    version: 0.03
 requires:
-  DBIx::Class: 0
+  DBIx::Class: 0.08009
   parent: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.02
+version: 0.03

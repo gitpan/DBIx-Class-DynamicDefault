@@ -5,7 +5,7 @@ package DBIx::Class::DynamicDefault;
 
 use parent 'DBIx::Class';
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 __PACKAGE__->mk_classdata(
     __column_dynamic_default_triggers => {

@@ -5,7 +5,7 @@ use inc::Module::Install;
 name 'DBIx-Class-DynamicDefault';
 all_from 'lib/DBIx/Class/DynamicDefault.pm';
 
-requires 'DBIx::Class';
+requires 'DBIx::Class' => '0.08009';
 requires 'parent';
 
 build_requires 'DBICx::TestDatabase';
