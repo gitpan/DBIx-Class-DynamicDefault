@@ -1,3 +1,9 @@
+0.04  Sat, 14 Apr 2012 10:09:00 +0100
+ Matt S Trout:
+     Fix a massive pessimisation causing repeated ->result_source_instance
+     invocations resulting in get_inherited from C::A::Grouped being the
+     biggest thing in a startup profile.
+
 0.03  Thu, 11 Sep 2008 18:42:48 +0200
  Florian Ragwitz (1):
      Require DBIx::Class >= 0.08009.

@@ -3,9 +3,11 @@ use warnings;
 
 package DBIx::Class::DynamicDefault;
 
-use parent 'DBIx::Class';
+use base 'DBIx::Class';
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
+
+$VERSION = eval $VERSION;
 
 __PACKAGE__->mk_classdata(
     __column_dynamic_default_triggers => {
@@ -59,8 +61,12 @@ sub add_columns {
     my @update_columns;
     my @create_columns;
 
-    for my $column ($self->columns) {
-        my $info = $self->column_info($column);
+    my $source = $self->result_source_instance;
+
+    my $col_info = $source->columns_info;
+
+    for my $column (keys %$col_info) {
+        my $info = $col_info->{$column};
 
         my $update_trigger = $info->{dynamic_default_on_update};
         push @update_columns, [$column => $update_trigger, $info->{always_update} || 0]
